@@ -1,0 +1,54 @@
+
+.weui-cells{
+  font-size: 26rpx;
+}
+.weui-cells:before {
+  top: 0;
+  border-top: none;
+}
+.weui-cells:after {
+  bottom: 0;
+  border-bottom: none;
+}
+.weui-cell{
+  height: 86rpx;
+  padding: 0;
+}
+// textarea的cells
+.weui-cells-textarea{
+  height: auto;
+  .weui-cell{
+    height: auto;
+  }
+  .weui-cell__bd{
+    padding: 0;
+  }
+}
+.weui-textarea{
+  z-index: 0;
+  position: relative;
+  vertical-align: top;
+}
+
+// select
+.weui-select{
+  height: 86rpx;
+  line-height: 86rpx;
+  border-right: none;
+}
+.weui-select_in-select-after {
+  text-align: right;
+  &.select-placeholder{
+    color: #999;
+  }
+}
+.weui-cell__bd_in-select-before,
+.weui-cell__hd_in-select-after {
+  padding-left: 0;
+}
+//checkbox
+.weui-check__label{
+  &:active,&:link,&:visited{
+    background: transparent;
+  }
+}

@@ -1,0 +1,102 @@
+<style lang="scss">
+  @import '../assets/sass/common.scss';
+  .modelTitle{
+    padding: 20rpx 0;
+  }
+  .modelBody{
+    border-bottom: 1px solid #ddd;
+    padding: 20rpx;
+    font-size: 30rpx;
+    color: #666;
+  }
+  .agree{
+    color: #1aad16;
+    background: #fff;
+    &::after{
+      border: none;
+    }
+  }
+</style>
+<template>
+  <view class="container">
+    Hello world
+
+    <bottom></bottom>
+
+    <view wx:if="{{showAuthSetting}}" class="ui-dialog">
+      <div class="ui-mask"></div>
+      <div class="ui-confirm" style="background:#fff;border-radius:10rpx">
+        <view class="modelTitle">
+          获取微信授权信息
+        </view>
+        <view class="modelBody">微信登录需要获取您的用户信息，请前往设置</view>
+        <view class="btns">
+          <button open-type="getUserInfo" class="agree" bindgetuserinfo="goSetting" lang="zh_CN">去设置</button>
+        </view>
+      </div>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import bottom from '../components/bottom'
+
+  export default class Index extends wepy.page {
+    config = {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'Hello world',
+      navigationBarTextStyle: 'black'
+    }
+    components = {
+      bottom
+    }
+
+    mixins = []
+
+    data = {
+      showAuthSetting: false
+    }
+
+    computed = {}
+
+    methods = {
+      goSetting(data){
+        console.log(data)
+        if(data.detail.userInfo){
+          this.showAuthSetting = false;
+          this.init();
+        }
+      },
+    }
+
+    init(params){
+      console.log('init')
+      console.log(params)
+    }
+
+    onLoad(params) {
+      let self = this;
+      wx.getSetting({
+        success: (res) => {
+          //判断用户已经授权。不需要弹框
+          if(res.authSetting['scope.userInfo']){
+            self.showAuthSetting = false
+            self.init(params);
+          }else{//没有授权需要弹框
+            self.showAuthSetting = true
+          }
+          self.$apply();
+        },
+        fail: function () {
+          wx.showToast({
+            title: '系统提示:网络错误',
+            icon: 'warn',
+            duration: 1500,
+          })
+        }
+      })
+    }
+  }
+</script>

@@ -1,0 +1,319 @@
+
+<style lang="scss">
+//在组件外的盒子需要加上类名 fromBox 即可
+@import '../assets/sass/color.scss';
+@import '../assets/sass/weui.scss';
+@import '../assets/sass/coverWeUI.scss';
+$borderC: #f6f6f6;// 两个输入框之间的分隔线颜色
+div,p,view,ul{
+  display: block;
+}
+.formBox{
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-top: 1rpx solid $borderC;
+  border-bottom: 1rpx solid $borderC;
+  .form:last-child{
+    border-bottom: none;
+  }
+}
+.form{
+  display: block;
+  width: 100%;
+  color: $font1C;
+  background: #fff;
+  border-bottom: 1rpx solid $borderC;
+  .item-box{
+    font-size: 0;
+    padding-left: 24rpx;
+    .before{
+      float: left;
+      text-align: left;
+      font-size: 28rpx;
+    }
+    .form-content{
+      display: inline-block;
+      height: 100%;
+      width: 558rpx;
+      .item-input{
+        display: block;
+        height: 100%;
+        font-size: 28rpx;
+      }
+    }
+  }
+  .item-textarea{
+    z-index: 0;
+    .before{
+      display: inline-block;
+      float: left;
+      height: 100%;
+      text-align: left;
+      font-size: 28rpx;
+      margin-top:28rpx;
+    }
+    .form-content{
+      margin-top:28rpx;
+      display: inline-block;
+      height: 100%;
+      width: 558rpx;
+      .item-input{
+        display: block;
+        height: 100%;
+        font-size: 28rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <!-- 表单组件 -->
+  <view class="form">
+    <!-- input框 -->
+    <div wx:if="{{type=='input'}}" class="item-box" style="height: {{height}};line-height: {{height}}">
+      <span wx:if="{{describe}}" class="before" style="width: {{beforeWidth}}">{{describe}}</span>
+      <div class="form-content" style="{{ifAfter == '1' ? ('width: ' + inputWidth):''}}">
+        <input bindinput="input" value="{{value}}" type="text" class="item-input" placeholder="{{placeholder}}" maxlength="{{maxlength}}"	/>
+      </div>
+      <slot name="after"></slot>
+    </div>
+
+    <!-- select -->
+    <view wx:if="{{type=='select'}}" class="weui-cells weui-cells_after-title borderB" style="width: 100%;">
+        <view class="weui-cell weui-cell_select">
+            <view class="weui-cell__hd weui-cell__hd_in-select-after" wx:if="{{describe}}">
+                <view class="weui-label" style="width: {{beforeWidth}}">{{describe}}</view>
+            </view>
+            <view class="weui-cell__bd" >
+                <picker bindchange="selectChange" value="{{selectIndex}}" range="{{selectList}}">
+                    <view wx:if="{{selectIndex != -1}}" class="weui-select weui-select_in-select-after">{{selectList[selectIndex]}}</view>
+                    <view wx:if="{{selectIndex == -1}}" class="weui-select weui-select_in-select-after select-placeholder">请选择</view>
+                </picker>
+            </view>
+        </view>
+    </view>
+    <!-- textarea -->
+    <div wx:if="{{type=='textarea'}}" class="item-textarea">
+      <span wx:if="{{describe}}" class="before" style="width: {{beforeWidth}};line-height: 28rpx;margin-top: {{iOSTextSpanMarginTop}}rpx;">{{describe}}</span>
+      <div class="form-content" style="margin-top: {{iOSTextareaMarginTop}}rpx;">
+        <view class="weui-cells weui-cells_after-title weui-cells-textarea" style="width: 100%;">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <textarea bindinput="input" value="{{value}}" class="weui-textarea" placeholder="{{placeholder}}" style="height: 120rpx;line-height: 28rpx;"/>
+                </view>
+            </view>
+        </view>
+      </div>
+    </div>
+    <!-- 时间选择 time -->
+    <view wx:if="{{type=='time'}}" class="weui-cells weui-cells_after-title borderB" style="width: 100%;">
+      <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd" wx:if="{{describe}}">
+              <view class="weui-label" style="width: {{beforeWidth}}">{{describe}}</view>
+          </view>
+          <view class="weui-cell__bd ">
+              <picker mode="time" value="{{time}}" start="09:01" end="21:01" bindchange="bindTimeChange">
+                  <view wx:if="{{time != ''}}" class="weui-select weui-select_in-select-after">{{time}}</view>
+                  <view wx:if="{{time == ''}}" class="weui-select weui-select_in-select-after select-placeholder">请选择</view>
+              </picker>
+          </view>
+      </view>
+    </view>
+    <!-- 日期选择 date -->
+    <view wx:if="{{type=='date'}}" class="weui-cells weui-cells_after-title borderB" style="width: 100%;">
+      <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd" wx:if="{{describe}}">
+              <view class="weui-label" style="width: {{beforeWidth}}">{{describe}}</view>
+          </view>
+          <view class="weui-cell__bd ">
+              <picker mode="date" value="{{date}}" bindchange="bindDateChange">
+                  <view wx:if="{{date != ''}}" class="weui-select weui-select_in-select-after">{{date}}</view>
+                  <view wx:if="{{date == ''}}" class="weui-select weui-select_in-select-after select-placeholder">请选择</view>
+              </picker>
+          </view>
+      </view>
+    </view>
+
+    <!-- 省市区 region -->
+    <view wx:if="{{type=='region'}}" class="weui-cells weui-cells_after-title borderB" style="width: 100%;">
+      <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd" wx:if="{{describe}}">
+              <view class="weui-label" style="width: {{beforeWidth}}">{{describe}}</view>
+          </view>
+          <view class="weui-cell__bd ">
+              <picker mode="region" value="{{region}}" bindchange="bindRegionChange">
+                  <view wx:if="{{region != ''}}" class="weui-select weui-select_in-select-after">{{region}}</view>
+                  <view wx:if="{{region == ''}}" class="weui-select weui-select_in-select-after select-placeholder">请选择</view>
+              </picker>
+          </view>
+      </view>
+    </view>
+
+
+    <!-- 多列选择器  //可用于自定义国省市区多级联动 -->
+    <view wx:if="{{type=='multiSelector'}}" class="weui-cells weui-cells_after-title borderB" style="width: 100%;">
+      <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd" wx:if="{{describe}}">
+              <view class="weui-label" style="width: {{beforeWidth}}">{{describe}}</view>
+          </view>
+          <view class="weui-cell__bd ">
+              <picker mode="multiSelector" value="{{region}}" bindchange="bindRegionChange" range="{{multiSelect}}">
+                  <view wx:if="{{region != ''}}" class="weui-select weui-select_in-select-after">{{region}}</view>
+                  <view wx:if="{{region == ''}}" class="weui-select weui-select_in-select-after select-placeholder">请选择</view>
+              </picker>
+          </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class FormItem extends wepy.component {
+  props = {
+    // 类型: 默认为input框
+    // 类型: input  select  textarea time region
+    type: {
+      type: String,
+      default: 'input'
+    },
+    value: {
+      type: String,
+      defalut: '',
+      twoWay: true
+    },
+    // 高度
+    height: {
+      type: String,
+      default: '87rpx'
+    },
+    // 标题字体占用的宽度
+    beforeWidth: {
+      type: String,
+      default: '150rpx'
+    },
+    // 标题字体内容
+    describe: {
+      type: String,
+      default: '请输入'
+    },
+    // input、textarea的占位描述
+    placeholder: {
+      type: String,
+      default: ''
+    },
+    maxlength: {
+      type: Number,
+      default: 24,
+      twoWay: true
+    },
+    // input 是否有尾部 0 没有 1 有
+    ifAfter: {
+      type: String,
+      default: '0'
+    },
+    // input 有尾部时的宽度
+    inputWidth: {
+      type: String,
+      default: '300rpx'
+    },
+    // select
+    selectList: {
+      type: Array,
+      default: ['否', '是'],
+      twoWay: true
+    },
+    selectIndex: {
+      type: Number,
+      default: -1,
+      twoWay: true
+    },
+    // time
+    time: {
+      type: String,
+      default: '',
+      twoWay: true
+    },
+    // date
+    date: {
+      type: String,
+      default: '',
+      twoWay: true
+    },
+    // 省市区 region
+    region: {
+      type: Array,
+      default: [],
+      twoWay: true
+    },
+    // 多列选择
+    multiSelect: {
+      type: Array,
+      default: [['zhongg']],
+      twoWay: true
+    }
+  };
+  data = {
+    iOSTextareaMarginTop: '',
+    iOSTextSpanMarginTop: ''
+  };
+
+  methods = {
+    input(e) {
+      console.log(e.detail.value)
+      this.value = e.detail.value
+      this.$apply()
+    },
+    selectChange(e) {
+      console.log('picker account 发生选择改变，携带值为', e.detail.value)
+      this.selectIndex = e.detail.value
+      this.$apply()
+    },
+    bindTimeChange(e) {
+      this.time = e.detail.value
+      this.$apply()
+    },
+    bindDateChange(e) {
+      var expDate = new Date(e.detail.value + '')
+      expDate.setHours(24)
+      if (expDate.getTime() < new Date().getTime()) {
+        console.log('选中的日期小于当前日期')
+        wx.showToast({
+          title: '请选择一个有效日期',
+          icon: 'none'
+        })
+        return
+      }
+      this.date = e.detail.value
+      this.$apply()
+    },
+    bindRegionChange(e) {
+      this.region = e.detail.value
+      this.$apply()
+    }
+  };
+
+  events = {
+    selectListUpdate: function(e) {
+      this.$apply()
+    },
+    multiSelectUpdate: function(e) {
+      console.log(this.multiSelect)
+      this.$apply()
+    }
+  }
+
+  onLoad() {
+    let self = this
+    // 解决iOS textarea自带内边距导致的布局问题。
+    let system = wx.getSystemInfoSync().system
+    if (system.indexOf('iOS') !== -1) {
+      self.iOSTextareaMarginTop = 0
+      self.iOSTextSpanMarginTop = 18
+      self.$apply()
+    }
+  }
+}
+</script>
